@@ -1,10 +1,13 @@
 import express from 'express'
 import { PrismaClient } from '@prisma/client'
-import { convertHourStringToMinutes } from './utils/convertHourStringToMinutes'
+import cors from 'cors'
+
+import { convertHourStringToMinutes, convertMinutesToHourString } from './utils/TimeManipulation'
 
 const app = express()
 
 app.use(express.json())
+app.use(cors())
 
 const prisma = new PrismaClient({
   log: ['query']
@@ -24,7 +27,7 @@ app.get('/games', async (request, response) => {
   return response.json(games)
 })
 
-app.post('games/:id/ads', async (request, response) => {
+app.post('/games/:id/ads', async (request, response) => {
   const gameId = request.params.id
   const body = request.body
 
@@ -41,7 +44,7 @@ app.post('games/:id/ads', async (request, response) => {
     }
   })
 
-  return response.status(205).json(ad)
+  return response.status(201).json(ad)
 })
 
 app.get('/games/:id/ads', async (request, response) => {
@@ -68,7 +71,9 @@ app.get('/games/:id/ads', async (request, response) => {
   return response.json(ads.map(ad => {
     return {
       ...ad,
-      weekDays: ad.weekDays.split(',')
+      weekDays: ad.weekDays.split(','),
+      hourStart: convertMinutesToHourString(ad.hourStart),
+      hourEnd: convertMinutesToHourString(ad.hourEnd),
     }
   }))
 })

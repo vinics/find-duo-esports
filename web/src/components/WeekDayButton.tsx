@@ -1,14 +1,23 @@
 import { ButtonHTMLAttributes } from "react";
+import * as ToggleGroup from '@radix-ui/react-toggle-group'
 
-interface IButtonProps extends ButtonHTMLAttributes<HTMLElement> {}
 
-export function WeekDayButton({ children, ...rest }: IButtonProps) {
+interface IButtonProps extends ToggleGroup.ToggleGroupItemProps {
+  isActive: boolean
+}
+
+export function WeekDayButton({ children, isActive, ...rest }: IButtonProps) {
   return (
-    <button 
+    <ToggleGroup.Item 
       {...rest}
-      className='w-8 h-8 rounded bg-zinc-900'
+      className={`
+        w-8
+        h-8
+        rounded
+        ${isActive ? 'bg-violet-500' : 'bg-zinc-900'}
+      `}
     >
       {children}
-    </button>
+    </ToggleGroup.Item >
   )
 }
